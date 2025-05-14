@@ -5,36 +5,15 @@ import { useData } from '@/contexts/DataContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
-import { useForm } from 'react-hook-form';
-import { User, Settings, Search, Briefcase, Building } from 'lucide-react';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-
-type EmployeeFormData = {
-  name: string;
-  email: string;
-  department: string;
-  position: string;
-  joinDate: string;
-};
+import { User, Search } from 'lucide-react';
+import EmployeeTable from '@/components/employees/EmployeeTable';
+import OvertimeTable from '@/components/employees/OvertimeTable';
+import AttendancePanel from '@/components/employees/AttendancePanel';
+import AddEmployeeForm, { EmployeeFormData } from '@/components/employees/AddEmployeeForm';
+import AccessDenied from '@/components/AccessDenied';
 
 const EmployeesPage = () => {
   const { user } = useAuth();
@@ -45,31 +24,10 @@ const EmployeesPage = () => {
 
   // Handle unauthorized access
   if (user?.role !== 'admin') {
-    return (
-      <DashboardLayout title="Access Denied">
-        <div className="flex flex-col items-center justify-center h-[70vh]">
-          <div className="text-red-500 text-6xl mb-6">⚠️</div>
-          <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
-          <p className="text-gray-600">You do not have permission to view this page.</p>
-          <Button className="mt-6" asChild>
-            <a href="/dashboard">Return to Dashboard</a>
-          </Button>
-        </div>
-      </DashboardLayout>
-    );
+    return <AccessDenied />;
   }
-
-  const form = useForm<EmployeeFormData>({
-    defaultValues: {
-      name: '',
-      email: '',
-      department: '',
-      position: '',
-      joinDate: '',
-    },
-  });
   
-  const onSubmit = (data: EmployeeFormData) => {
+  const handleSubmit = (data: EmployeeFormData) => {
     addEmployee(data);
     
     toast({
@@ -78,7 +36,6 @@ const EmployeesPage = () => {
     });
     
     setIsDialogOpen(false);
-    form.reset();
   };
 
   const filteredEmployees = searchTerm 
@@ -121,57 +78,7 @@ const EmployeesPage = () => {
               <CardTitle>Employee Directory</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Department</th>
-                    <th>Position</th>
-                    <th>Join Date</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredEmployees.length > 0 ? (
-                    filteredEmployees.map((employee) => (
-                      <tr key={employee.id}>
-                        <td className="font-medium">{employee.name}</td>
-                        <td>{employee.email}</td>
-                        <td>
-                          <div className="flex items-center">
-                            <Building className="h-4 w-4 mr-2 text-company-green" />
-                            {employee.department}
-                          </div>
-                        </td>
-                        <td>
-                          <div className="flex items-center">
-                            <Briefcase className="h-4 w-4 mr-2 text-company-green" />
-                            {employee.position}
-                          </div>
-                        </td>
-                        <td>{new Date(employee.joinDate).toLocaleDateString()}</td>
-                        <td>
-                          <div className="flex space-x-2">
-                            <Button variant="outline" size="sm">
-                              Edit
-                            </Button>
-                            <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
-                              Delete
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={6} className="text-center py-4">
-                        {searchTerm ? "No matching employees found" : "No employees in the system"}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+              <EmployeeTable employees={filteredEmployees} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -182,218 +89,23 @@ const EmployeesPage = () => {
               <CardTitle>Overtime Report</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Department</th>
-                    <th>Daily Overtime</th>
-                    <th>Weekly Overtime</th>
-                    <th>Monthly Overtime</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {employees.map((employee) => {
-                    const dailyOvertime = getOvertime(employee.id, 'day');
-                    const weeklyOvertime = getOvertime(employee.id, 'week');
-                    const monthlyOvertime = getOvertime(employee.id, 'month');
-                    
-                    return (
-                      <tr key={employee.id}>
-                        <td className="font-medium">{employee.name}</td>
-                        <td>{employee.department}</td>
-                        <td>
-                          {dailyOvertime.hours > 0 || dailyOvertime.minutes % 60 > 0 ? (
-                            <span className="text-company-blue">
-                              {dailyOvertime.hours}h {dailyOvertime.minutes % 60}m
-                            </span>
-                          ) : (
-                            <span className="text-gray-500">None</span>
-                          )}
-                        </td>
-                        <td>
-                          {weeklyOvertime.hours > 0 || weeklyOvertime.minutes % 60 > 0 ? (
-                            <span className="text-company-blue font-medium">
-                              {weeklyOvertime.hours}h {weeklyOvertime.minutes % 60}m
-                            </span>
-                          ) : (
-                            <span className="text-gray-500">None</span>
-                          )}
-                        </td>
-                        <td>
-                          {monthlyOvertime.hours > 0 || monthlyOvertime.minutes % 60 > 0 ? (
-                            <span className="text-company-blue font-medium">
-                              {monthlyOvertime.hours}h {monthlyOvertime.minutes % 60}m
-                            </span>
-                          ) : (
-                            <span className="text-gray-500">None</span>
-                          )}
-                        </td>
-                        <td>
-                          <Button variant="outline" size="sm">
-                            Generate Report
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+              <OvertimeTable employees={employees} getOvertime={getOvertime} />
             </CardContent>
           </Card>
         </TabsContent>
         
         <TabsContent value="attendance">
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="bg-gray-50 border-b p-4 flex justify-between items-center">
-              <h2 className="font-semibold">Attendance Report</h2>
-              <Button variant="outline" size="sm">
-                Export to Excel
-              </Button>
-            </div>
-            <div className="p-8 text-center text-gray-500">
-              <Settings className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-              <h3 className="text-lg font-medium mb-2">Coming Soon</h3>
-              <p>The detailed attendance report feature is under development.</p>
-            </div>
-          </div>
+          <AttendancePanel />
         </TabsContent>
       </Tabs>
       
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Add New Employee</DialogTitle>
-            <DialogDescription>
-              Enter the details of the new employee.
-            </DialogDescription>
-          </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                rules={{ required: "Name is required" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="John Doe" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="email"
-                rules={{ 
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
-                  }
-                }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input {...field} type="email" placeholder="john@nooralqmar.com" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="department"
-                  rules={{ required: "Department is required" }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Department</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select department" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {departments.map((dept) => (
-                            <SelectItem key={dept} value={dept}>
-                              {dept}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="position"
-                  rules={{ required: "Position is required" }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Position</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select position" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {positions.map((pos) => (
-                            <SelectItem key={pos} value={pos}>
-                              {pos}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <FormField
-                control={form.control}
-                name="joinDate"
-                rules={{ required: "Join date is required" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Join Date</FormLabel>
-                    <FormControl>
-                      <Input {...field} type="date" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit" className="bg-company-green hover:bg-company-darkGreen">
-                  Add Employee
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+      <AddEmployeeForm
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSubmit={handleSubmit}
+        departments={departments}
+        positions={positions}
+      />
     </DashboardLayout>
   );
 };
