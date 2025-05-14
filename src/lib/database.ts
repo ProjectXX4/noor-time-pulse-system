@@ -36,7 +36,7 @@ export const databaseConfig = {
 /**
  * Example function to demonstrate how to connect from the frontend to a backend API:
  */
-export async function fetchFromApi(endpoint: string, options = {}) {
+export async function fetchFromApi(endpoint: string, options: RequestInit = {}) {
   const apiUrl = 'https://noorreport.nooralqmar.com/api';
   
   try {
@@ -45,7 +45,7 @@ export async function fetchFromApi(endpoint: string, options = {}) {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        ...options.headers,
+        ...(options.headers || {}),
       },
     });
     
