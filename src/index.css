@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -83,12 +84,12 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
 }
 
 .checkin-button {
-  @apply relative overflow-hidden inline-flex items-center justify-center px-6 py-3 font-medium transition-all rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary;
+  @apply relative overflow-hidden inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 font-medium transition-all rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary;
 }
 
 .checkin-button::before {
@@ -101,11 +102,11 @@
 }
 
 .dashboard-card {
-  @apply bg-white rounded-xl shadow-md p-5 transition-all duration-200 hover:shadow-lg;
+  @apply bg-white rounded-xl shadow-md p-4 sm:p-5 transition-all duration-200 hover:shadow-lg;
 }
 
 .statistics-card {
-  @apply bg-white rounded-xl shadow-sm p-5 border border-gray-100;
+  @apply bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100;
 }
 
 .data-table {
@@ -113,9 +114,36 @@
 }
 
 .data-table th {
-  @apply px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-gray-50;
+  @apply px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-gray-50;
 }
 
 .data-table td {
-  @apply px-6 py-4 text-sm text-gray-700 border-t border-gray-200;
+  @apply px-4 py-4 text-sm text-gray-700 border-t border-gray-200;
+}
+
+/* Responsive improvements */
+@media (max-width: 640px) {
+  .data-table {
+    @apply table-auto;
+  }
+  
+  .data-table th,
+  .data-table td {
+    @apply px-2 py-2;
+  }
+  
+  .data-table th {
+    @apply text-xxs;
+  }
+  
+  .data-table td {
+    @apply text-xs;
+  }
+}
+
+@layer utilities {
+  .text-xxs {
+    font-size: 0.65rem;
+    line-height: 1rem;
+  }
 }

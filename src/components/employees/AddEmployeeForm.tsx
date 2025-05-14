@@ -1,8 +1,10 @@
 
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Employee } from '@/contexts/DataContext';
 import { 
   Select,
   SelectContent,
@@ -41,10 +43,19 @@ interface AddEmployeeFormProps {
   onSubmit: (data: EmployeeFormData) => void;
   departments: string[];
   positions: string[];
+  employee?: Employee | null;
 }
 
-const AddEmployeeForm = ({ isOpen, onClose, onSubmit, departments, positions }: AddEmployeeFormProps) => {
+const AddEmployeeForm = ({ 
+  isOpen, 
+  onClose, 
+  onSubmit, 
+  departments, 
+  positions,
+  employee 
+}: AddEmployeeFormProps) => {
   const { toast } = useToast();
+  const isEditing = !!employee;
   
   const form = useForm<EmployeeFormData>({
     defaultValues: {
@@ -56,6 +67,27 @@ const AddEmployeeForm = ({ isOpen, onClose, onSubmit, departments, positions }: 
     },
   });
   
+  // Update form when editing an employee
+  useEffect(() => {
+    if (employee) {
+      form.reset({
+        name: employee.name,
+        email: employee.email,
+        department: employee.department,
+        position: employee.position,
+        joinDate: employee.joinDate,
+      });
+    } else {
+      form.reset({
+        name: '',
+        email: '',
+        department: '',
+        position: '',
+        joinDate: '',
+      });
+    }
+  }, [employee, form]);
+  
   const handleSubmit = (data: EmployeeFormData) => {
     onSubmit(data);
     form.reset();
@@ -65,9 +97,13 @@ const AddEmployeeForm = ({ isOpen, onClose, onSubmit, departments, positions }: 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Add New Employee</DialogTitle>
+          <DialogTitle>
+            {isEditing ? `Edit Employee: ${employee?.name}` : "Add New Employee"}
+          </DialogTitle>
           <DialogDescription>
-            Enter the details of the new employee.
+            {isEditing 
+              ? "Update the employee's information." 
+              : "Enter the details of the new employee."}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -119,6 +155,7 @@ const AddEmployeeForm = ({ isOpen, onClose, onSubmit, departments, positions }: 
                     <Select 
                       onValueChange={field.onChange} 
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -148,6 +185,7 @@ const AddEmployeeForm = ({ isOpen, onClose, onSubmit, departments, positions }: 
                     <Select 
                       onValueChange={field.onChange} 
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -188,7 +226,7 @@ const AddEmployeeForm = ({ isOpen, onClose, onSubmit, departments, positions }: 
                 Cancel
               </Button>
               <Button type="submit" className="bg-company-green hover:bg-company-darkGreen">
-                Add Employee
+                {isEditing ? "Update Employee" : "Add Employee"}
               </Button>
             </DialogFooter>
           </form>

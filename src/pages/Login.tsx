@@ -32,28 +32,36 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-50 to-white">
+      <div className="w-full max-w-md px-4">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-company-blue">NoorEMS</h1>
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/lovable-uploads/dbf30808-ef5f-4d42-81c5-95a2a70207a3.png" 
+              alt="Noor Al Qmar Logo" 
+              className="h-28 w-28 object-contain" 
+            />
+          </div>
+          <h1 className="text-3xl font-bold text-company-green">NoorEMS</h1>
           <p className="text-gray-600">Employee Management System</p>
         </div>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Login</CardTitle>
-            <CardDescription>
+        <Card className="shadow-lg border-green-100">
+          <CardHeader className="pb-6">
+            <CardTitle className="text-center text-2xl text-company-green">Welcome Back</CardTitle>
+            <CardDescription className="text-center">
               Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="your.email@nooralqmar.com"
+                  className="h-12"
                   {...register('email', {
                     required: 'Email is required',
                     pattern: {
@@ -70,7 +78,7 @@ const Login = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
-                  <a href="#" className="text-sm text-company-blue hover:underline">
+                  <a href="#" className="text-sm text-company-green hover:underline">
                     Forgot password?
                   </a>
                 </div>
@@ -78,6 +86,7 @@ const Login = () => {
                   id="password"
                   type="password"
                   placeholder="••••••••"
+                  className="h-12"
                   {...register('password', { required: 'Password is required' })}
                 />
                 {errors.password && (
@@ -85,13 +94,17 @@ const Login = () => {
                 )}
               </div>
               
-              <Button className="w-full" type="submit" disabled={isLoading}>
+              <Button 
+                className="w-full h-12 text-base bg-company-green hover:bg-company-darkGreen transition-all" 
+                type="submit" 
+                disabled={isLoading}
+              >
                 {isLoading ? 'Logging in...' : 'Login'}
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex justify-center">
-            <p className="text-sm text-gray-500">
+          <CardFooter className="flex justify-center pt-1 pb-6 border-t">
+            <p className="text-sm text-gray-500 pt-4">
               Demo credentials: admin@nooralqmar.com / admin123
             </p>
           </CardFooter>

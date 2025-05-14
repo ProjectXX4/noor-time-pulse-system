@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Clock, CheckCircle } from 'lucide-react';
 
 const CheckInPage = () => {
@@ -96,15 +96,15 @@ const CheckInPage = () => {
               {formatDate(new Date())}
             </CardDescription>
           </CardHeader>
-          <CardContent className="py-8 px-6 text-center">
+          <CardContent className="py-8 px-4 md:px-6 text-center">
             <div className="mb-8">
-              <div className="text-7xl font-light text-center mb-2">
+              <div className="text-5xl md:text-7xl font-light text-center mb-2">
                 {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </div>
               <div className="text-gray-500">Current Time</div>
             </div>
             
-            <div className="grid grid-cols-2 gap-10 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mb-10">
               <div className="flex flex-col items-center">
                 <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-3">
                   <CheckCircle className="w-8 h-8 text-green-600" />
@@ -116,7 +116,7 @@ const CheckInPage = () => {
                 <Button 
                   onClick={handleCheckIn} 
                   disabled={isSubmitting || !!checkInRecord} 
-                  className={`mt-2 px-6 transition-all ${checkInRecord ? 'bg-gray-300' : 'bg-company-blue hover:bg-company-darkBlue'} checkin-button`}
+                  className={`mt-4 px-6 w-full md:w-auto transition-all ${checkInRecord ? 'bg-gray-300' : 'bg-company-green hover:bg-company-darkGreen'} checkin-button`}
                 >
                   {checkInRecord ? 'Checked In' : 'Check In'}
                 </Button>
@@ -134,7 +134,7 @@ const CheckInPage = () => {
                   onClick={handleCheckOut} 
                   disabled={isSubmitting || !checkInRecord || !!checkOutRecord}
                   variant="outline" 
-                  className={`mt-2 px-6 ${!checkInRecord || checkOutRecord ? 'bg-gray-100 border-gray-300 text-gray-400' : 'border-company-blue text-company-blue hover:bg-company-blue hover:text-white'} checkin-button`}
+                  className={`mt-4 px-6 w-full md:w-auto ${!checkInRecord || checkOutRecord ? 'bg-gray-100 border-gray-300 text-gray-400' : 'border-company-green text-company-green hover:bg-company-green hover:text-white'} checkin-button`}
                 >
                   {checkOutRecord ? 'Checked Out' : 'Check Out'}
                 </Button>
