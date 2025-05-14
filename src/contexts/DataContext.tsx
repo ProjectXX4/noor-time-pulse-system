@@ -29,6 +29,26 @@ export type Employee = {
   joinDate: string;
 };
 
+// Company departments and positions
+export const DEPARTMENTS = [
+  'Engineering',
+  'IT',
+  'Doctor',
+  'Manager',
+  'Customer Service',
+];
+
+export const POSITIONS = [
+  'Frontend Developer',
+  'Backend Developer',
+  'Designer',
+  'Media Buyer',
+  'Copy Writer',
+  'Doctor',
+  'Manager',
+  'Customer Service Representative',
+];
+
 // Mock data
 const generateMockCheckIns = () => {
   const now = new Date();
@@ -97,6 +117,8 @@ type DataContextType = {
   checkIns: CheckInRecord[];
   workReports: WorkReport[];
   employees: Employee[];
+  departments: string[];
+  positions: string[];
   addCheckIn: (userId: number, type: 'in' | 'out') => void;
   addWorkReport: (report: Omit<WorkReport, 'id' | 'submittedAt'>) => void;
   addEmployee: (employee: Omit<Employee, 'id'>) => void;
@@ -226,6 +248,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         checkIns,
         workReports,
         employees,
+        departments: DEPARTMENTS,
+        positions: POSITIONS,
         addCheckIn,
         addWorkReport,
         addEmployee,

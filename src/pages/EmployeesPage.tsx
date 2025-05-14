@@ -11,7 +11,22 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { useForm } from 'react-hook-form';
-import { User, Settings, Search } from 'lucide-react';
+import { User, Settings, Search, Briefcase, Building } from 'lucide-react';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 type EmployeeFormData = {
   name: string;
@@ -23,7 +38,7 @@ type EmployeeFormData = {
 
 const EmployeesPage = () => {
   const { user } = useAuth();
-  const { employees, addEmployee, getOvertime } = useData();
+  const { employees, addEmployee, getOvertime, departments, positions } = useData();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,8 +59,16 @@ const EmployeesPage = () => {
     );
   }
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<EmployeeFormData>();
-
+  const form = useForm<EmployeeFormData>({
+    defaultValues: {
+      name: '',
+      email: '',
+      department: '',
+      position: '',
+      joinDate: '',
+    },
+  });
+  
   const onSubmit = (data: EmployeeFormData) => {
     addEmployee(data);
     
@@ -55,7 +78,7 @@ const EmployeesPage = () => {
     });
     
     setIsDialogOpen(false);
-    reset();
+    form.reset();
   };
 
   const filteredEmployees = searchTerm 
@@ -79,7 +102,7 @@ const EmployeesPage = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button onClick={() => setIsDialogOpen(true)} className="bg-company-blue hover:bg-company-darkBlue">
+        <Button onClick={() => setIsDialogOpen(true)} className="bg-company-green hover:bg-company-darkGreen">
           <User className="mr-2 h-4 w-4" />
           Add New Employee
         </Button>
@@ -115,8 +138,18 @@ const EmployeesPage = () => {
                       <tr key={employee.id}>
                         <td className="font-medium">{employee.name}</td>
                         <td>{employee.email}</td>
-                        <td>{employee.department}</td>
-                        <td>{employee.position}</td>
+                        <td>
+                          <div className="flex items-center">
+                            <Building className="h-4 w-4 mr-2 text-company-green" />
+                            {employee.department}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="flex items-center">
+                            <Briefcase className="h-4 w-4 mr-2 text-company-green" />
+                            {employee.position}
+                          </div>
+                        </td>
                         <td>{new Date(employee.joinDate).toLocaleDateString()}</td>
                         <td>
                           <div className="flex space-x-2">
@@ -236,72 +269,129 @@ const EmployeesPage = () => {
               Enter the details of the new employee.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input 
-                  id="name"
-                  {...register('name', { required: 'Name is required' })}
-                />
-                {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
-              </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                rules={{ required: "Name is required" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="John Doe" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input 
-                  id="email"
-                  type="email"
-                  {...register('email', { 
-                    required: 'Email is required',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Invalid email address',
-                    }
-                  })}
-                />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-              </div>
+              <FormField
+                control={form.control}
+                name="email"
+                rules={{ 
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address",
+                  }
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="email" placeholder="john@nooralqmar.com" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               
               <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="department">Department</Label>
-                  <Input 
-                    id="department"
-                    {...register('department', { required: 'Department is required' })}
-                  />
-                  {errors.department && <p className="text-red-500 text-sm">{errors.department.message}</p>}
-                </div>
+                <FormField
+                  control={form.control}
+                  name="department"
+                  rules={{ required: "Department is required" }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Department</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select department" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {departments.map((dept) => (
+                            <SelectItem key={dept} value={dept}>
+                              {dept}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 
-                <div className="grid gap-2">
-                  <Label htmlFor="position">Position</Label>
-                  <Input 
-                    id="position"
-                    {...register('position', { required: 'Position is required' })}
-                  />
-                  {errors.position && <p className="text-red-500 text-sm">{errors.position.message}</p>}
-                </div>
+                <FormField
+                  control={form.control}
+                  name="position"
+                  rules={{ required: "Position is required" }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Position</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select position" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {positions.map((pos) => (
+                            <SelectItem key={pos} value={pos}>
+                              {pos}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               
-              <div className="grid gap-2">
-                <Label htmlFor="joinDate">Join Date</Label>
-                <Input 
-                  id="joinDate"
-                  type="date"
-                  {...register('joinDate', { required: 'Join date is required' })}
-                />
-                {errors.joinDate && <p className="text-red-500 text-sm">{errors.joinDate.message}</p>}
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" className="bg-company-blue hover:bg-company-darkBlue">
-                Add Employee
-              </Button>
-            </DialogFooter>
-          </form>
+              <FormField
+                control={form.control}
+                name="joinDate"
+                rules={{ required: "Join date is required" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Join Date</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="date" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" className="bg-company-green hover:bg-company-darkGreen">
+                  Add Employee
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </DashboardLayout>
