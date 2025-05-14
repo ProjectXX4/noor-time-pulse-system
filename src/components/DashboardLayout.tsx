@@ -32,7 +32,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
                   <span className="text-gray-500">Welcome,</span>{' '}
                   <span className="font-medium">{user?.name}</span>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-company-blue text-white flex items-center justify-center font-medium">
+                <div className="w-9 h-9 rounded-full bg-company-green text-white flex items-center justify-center font-medium">
                   {user?.name.charAt(0)}
                 </div>
               </div>
@@ -44,7 +44,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
           </main>
           
           <footer className="py-4 px-6 border-t text-center text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} Nooralqmar Employee Management System. All rights reserved.
+            &copy; {new Date().getFullYear()} NoorCare Employee Management System. All rights reserved.
           </footer>
         </div>
       </div>

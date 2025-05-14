@@ -64,9 +64,12 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				company: {
-					blue: '#1e40af',
-					lightBlue: '#3b82f6',
-					darkBlue: '#1e3a8a',
+					green: '#25a244', // New green color
+					lightGreen: '#34d058', // Lighter green
+					darkGreen: '#176f2c', // Darker green
+					red: '#ea384c', // New red color 
+					lightRed: '#ff5a5f', // Lighter red
+					darkRed: '#c5283d', // Darker red
 					gray: '#f3f4f6',
 					darkGray: '#374151'
 				}

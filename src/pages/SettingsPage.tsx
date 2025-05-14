@@ -39,7 +39,7 @@ const SettingsPage = () => {
     return (
       <DashboardLayout title="Access Denied">
         <div className="flex flex-col items-center justify-center h-[70vh]">
-          <div className="text-red-500 text-6xl mb-6">⚠️</div>
+          <div className="text-company-red text-6xl mb-6">⚠️</div>
           <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
           <p className="text-gray-600">You do not have permission to view this page.</p>
           <Button className="mt-6" asChild>
@@ -83,7 +83,7 @@ const SettingsPage = () => {
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Clock className="mr-2 h-5 w-5" />
+                <Clock className="mr-2 h-5 w-5 text-company-green" />
                 Working Hours Configuration
               </CardTitle>
               <CardDescription>
@@ -127,7 +127,7 @@ const SettingsPage = () => {
                   </div>
                 </div>
                 
-                <Button type="submit" className="bg-company-blue hover:bg-company-darkBlue">
+                <Button type="submit" className="bg-company-green hover:bg-company-darkGreen">
                   Save Working Hours
                 </Button>
               </form>
@@ -214,7 +214,7 @@ const SettingsPage = () => {
               <div className="space-y-4">
                 <div>
                   <h3 className="font-medium text-sm text-gray-500 mb-1">System Name</h3>
-                  <p>NoorEMS</p>
+                  <p>NoorCare</p>
                 </div>
                 
                 <div>
@@ -232,18 +232,23 @@ const SettingsPage = () => {
                   <p>{new Date().toLocaleDateString()}</p>
                 </div>
                 
+                <div>
+                  <h3 className="font-medium text-sm text-gray-500 mb-1">Domain</h3>
+                  <p>https://noorreport.nooralqmar.com/</p>
+                </div>
+                
                 <Separator />
                 
                 <div className="pt-2">
                   <Button variant="outline" className="w-full mb-2">
-                    <Clock12 className="mr-2 h-4 w-4" />
+                    <Clock12 className="mr-2 h-4 w-4 text-company-green" />
                     View System Logs
                   </Button>
                   <Button variant="outline" className="w-full mb-2">
-                    <Settings className="mr-2 h-4 w-4" />
+                    <Settings className="mr-2 h-4 w-4 text-company-green" />
                     Advanced Settings
                   </Button>
-                  <Button variant="outline" className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
+                  <Button variant="outline" className="w-full text-company-red border-red-200 hover:bg-red-50 hover:text-company-darkRed">
                     Clear System Cache
                   </Button>
                 </div>
